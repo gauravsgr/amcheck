@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import config 
+import config # AWS credentials saved in the config file
 
 def getDriver():
    """Creates and returns the chrome headless driver."""
@@ -101,4 +101,3 @@ def main():
 
 if __name__ == "__main__":
    main()
-   
