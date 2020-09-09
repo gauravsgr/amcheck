@@ -4,7 +4,9 @@ from selenium.webdriver.common.by import By
 import config 
 
 def getDriver():
-   DRIVER_PATH = '/home/gaurav/Desktop/sample/chromedriver'
+   """Creates and returns the chrome headless driver."""
+
+   DRIVER_PATH = './chromedriver'
    options = Options()
    options.add_argument('--no-sandbox')
    options.add_argument('--headless')
@@ -16,13 +18,27 @@ def getDriver():
 
 
 def scrapeSite(driver, minValue):
+   """returns the min price and the sites that offer that price under the specificed threshold.
+
+      The chromium browser needs to be installed and chrome driver executable availabe to work.
+
+      Parameters
+      ----------
+      driver : WebDriver object
+         The driver object of chrome browser
+      minValue : float
+         The min threshold to filter in sites (sellers) that have low price
+
+      Returns
+      -------
+      list
+        a string of the concatenation of min price (that meets threshold) and sites offering it
+   """
+
    driver.get("https://ammoseek.com/ammo/9mm-luger?ca=brass")
-   print("Hello")
-   print(driver.page_source)
    prices = {}
    items = driver.find_elements(By.ID, 'cprField')
    for item in items:
-      
       site = item.get_attribute('onclick')
       price = item.text
       site = site.replace("window.open('", '')
@@ -33,19 +49,29 @@ def scrapeSite(driver, minValue):
       elif item.text.find('¢') != -1: 
          prices[site] = float(price.replace('¢','')) 
       print(price, site)
-   driver.quit()
-   print("Hello again")
-   temp = min(prices.values()) 
+   driver.quit() # closing the driver
+
+   temp = min(prices.values()) # checking if there is a price <= threshold
    if temp > minValue: 
       return None
-   res = [key for key in prices if prices[key] == temp] 
-   # printing result  
-   print("Keys with minimum values are : " + str(res)) 
+   res = [key for key in prices if prices[key] == temp]     
    return (str(temp) + '¢ @ ' + str(res))
 
 
 import boto3
 def sendMessage(message, cellNumbers):
+   """Sends SMS to the cell numbers about the price and the sites that selling at that price.
+
+      The chromium browser needs to be installed and chrome driver executable availabe to work.
+
+      Parameters
+      ----------
+      message : str
+         The message detailing the price and the sites (URLs) selling at that price. 
+      cellNumbers : list
+         List of cell numbers of the people who wish to ge notified about the sites with low price.
+   """
+
    # Create an SNS client
    client = boto3.client(
       "sns",
@@ -55,16 +81,18 @@ def sendMessage(message, cellNumbers):
    )
 
    for cellNumber in cellNumbers:  
-      # Send your sms message.
-      result = client.publish(
-         PhoneNumber = cellNumber,
-         Message = message
-      )
+      result = client.publish(PhoneNumber = cellNumber, Message = message)
       print(result)
    return 
 
 
 def main():
+   """The main function. We may want to pass in min threshold and cell numbers as arguments here. 
+      Future work: Have phonenumbers in a separate file.
+
+   The chromium browser needs to be installed and chrome driver executable availabe to work.
+   """
+
    res = scrapeSite(getDriver(), 70) #the min threshold value
    if res is not None:
       print(res)
@@ -73,5 +101,4 @@ def main():
 
 if __name__ == "__main__":
    main()
-
-
+   
