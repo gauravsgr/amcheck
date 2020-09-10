@@ -9,5 +9,5 @@ subscriber base.
 
 To do:
 1. Use tinyurl for shortening the urls even more (saves SMS word count limit and data limits)
-2. Create requirements.txt file (installation of chrome browser and boto3 library along with python and pip)
-3. Logic to avoid sending repeated SMS if the seller is still the same
+2. Logic to avoid sending repeated SMS if the seller is still the same
+3. Add steps to add chrome browser
