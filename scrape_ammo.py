@@ -17,47 +17,6 @@ def getDriver():
    return driver
 
 
-def scrapeSite(driver, minValue):
-   """returns the min price and the sites that offer that price under the specificed threshold.
-
-      The chromium browser needs to be installed and chrome driver executable availabe to work.
-
-      Parameters
-      ----------
-      driver : WebDriver object
-         The driver object of chrome browser
-      minValue : float
-         The min threshold to filter in sites (sellers) that have low price
-
-      Returns
-      -------
-      list
-        a string of the concatenation of min price (that meets threshold) and sites offering it
-   """
-
-   driver.get("https://ammoseek.com/ammo/9mm-luger?ca=brass")
-   prices = {}
-   items = driver.find_elements(By.ID, 'cprField')
-   for item in items:
-      site = item.get_attribute('onclick')
-      price = item.text
-      site = site.replace("window.open('", '')
-      site = site.replace("');", '')
-      site = "http://ammoseek.com" + site
-      if price.find('$') != -1: 
-         prices[site] = float(price.replace('$',''))*100 
-      elif item.text.find('¢') != -1: 
-         prices[site] = float(price.replace('¢','')) 
-      print(price, site)
-   driver.quit() # closing the driver
-
-   temp = min(prices.values()) # checking if there is a price <= threshold
-   if temp > minValue: 
-      return None
-   res = [key for key in prices if prices[key] == temp]     
-   return (str(temp) + '¢ @ ' + str(res))
-
-
 import boto3
 def sendMessage(message, cellNumbers):
    """Sends SMS to the cell numbers about the price and the sites that selling at that price.
@@ -85,6 +44,45 @@ def sendMessage(message, cellNumbers):
       print(result)
    return 
 
+def scrapeSite(driver, minValue):   
+   """returns the min price and the sites that offer that price under the specificed threshold.
+
+      The chromium browser needs to be installed and chrome driver executable availabe to work.
+
+      Parameters
+      ----------
+      driver : WebDriver object
+         The driver object of chrome browser
+      minValue : float
+         The min threshold to filter in sites (sellers) that have low price
+
+      Returns
+      -------
+      list
+        a string of the concatenation of min price (that meets threshold) and sites offering it
+   """
+
+   driver.get("https://ammoseek.com/ammo/9mm-luger?ca=brass")
+   items = driver.find_elements(By.CLASS_NAME, 'description-link') # ammoseller
+   cprs = driver.find_elements(By.ID, 'cprField') # cost per round
+   prices = {} # dictionary to store price per round and the site
+   for i in range(len(items)):
+      site = items[i].get_attribute('href')
+      price = cprs[i].text
+      if price.find('$') != -1: 
+         prices[site] = float(price.replace('$',''))*100 
+      elif price.find('¢') != -1: 
+         prices[site] = float(price.replace('¢','')) 
+      print(site, price)
+   driver.quit() # closing the driver
+   
+   temp = min(prices.values()) # checking if there is a price <= threshold
+   if temp > minValue: 
+      return None
+   res = [key for key in prices if prices[key] == temp]     
+   return (str(temp) + '¢ @ ' + str(res))
+
+
 
 def main():
    """The main function. We may want to pass in min threshold and cell numbers as arguments here. 
@@ -93,11 +91,14 @@ def main():
    The chromium browser needs to be installed and chrome driver executable availabe to work.
    """
 
-   res = scrapeSite(getDriver(), 70) #the min threshold value
+   res = scrapeSite(getDriver(), 60) #the min threshold value
    if res is not None:
       print(res)
-      sendMessage(res, ['+1phonenumber']) # list of phonenumbers
-
+      #sendMessage(res, ['+1phonenumber']) # list of phonenumbers
+   
 
 if __name__ == "__main__":
-   main()
+  main()
+  
+
+
