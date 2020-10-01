@@ -44,7 +44,9 @@ def sendMessage(message, cellNumbers):
       print(result)
    return 
 
-def scrapeSite(driver, minValue):   
+import time
+import pandas as pd
+def scrapeSite(driver, price_threshold):   
    """returns the min price and the sites that offer that price under the specificed threshold.
 
       The chromium browser needs to be installed and chrome driver executable availabe to work.
@@ -76,11 +78,64 @@ def scrapeSite(driver, minValue):
       print(site, price)
    driver.quit() # closing the driver
    
-   temp = min(prices.values()) # checking if there is a price <= threshold
-   if temp > minValue: 
+   min_site_price = min(prices.values()) # checking if there is a price <= threshold
+   if min_site_price > price_threshold: 
       return None
-   res = [key for key in prices if prices[key] == temp]     
-   return (str(temp) + '¢ @ ' + str(res))
+   siteList = [key for key in prices if prices[key] == min_site_price]   
+
+   df = pd.DataFrame()
+   seconds = int(time.time())
+   df['site'] = siteList
+   df['price'] = min_site_price
+   df['seconds'] = seconds
+   df['updated'] = 1
+   filename = "data.txt"
+   with open(filename, 'a') as f:
+      df.to_csv(f, mode='a', header=f.tell()==0, index=None)
+   f.close()
+
+   old_df = pd.read_csv(filename)
+   old_df = old_df.groupby(['site', 'price']).agg(
+      seconds = ('seconds', 'max'), updated = ('updated', 'sum')
+      ).reset_index()
+   old_df = old_df[(old_df['seconds'] >= (seconds - 86400))] # removing rows older than rolling 24 hours
+   old_df.to_csv(filename, encoding='utf-8', index=False)
+   print(old_df)
+   temp = old_df[((old_df['updated'] == 1) & (old_df['seconds'] == seconds))]
+   if(temp.shape[0] == 0):
+      return None
+   return str(min_site_price) + '¢ @ ' + str(temp.site.tolist())
+
+
+import time
+import pandas as pd
+def updateDataStore(siteList, min_site_price):
+   df = pd.DataFrame()
+   seconds = int(time.time())
+   df['site'] = siteList
+   df['price'] = min_site_price
+   df['seconds'] = seconds
+   df['updated'] = 1
+   filename = "data.txt"
+   with open(filename, 'a') as f:
+      df.to_csv(f, mode='a', header=f.tell()==0, index=None)
+   f.close()
+
+   old_df = pd.read_csv(filename)
+   old_df = old_df.groupby(['site', 'price']).agg(
+      seconds = ('seconds', 'max'), updated = ('updated', 'sum')
+      ).reset_index()
+   old_df = old_df[(old_df['seconds'] >= (seconds - 86400))] # removing rows older than rolling 24 hours
+   old_df.to_csv(filename, encoding='utf-8', index=False)
+   print(old_df)
+   temp = old_df[((old_df['updated'] == 1) & (old_df['seconds'] == seconds))]
+   if(temp.shape[0] == 0):
+      return None
+   return str(min_site_price) + '¢ @ ' + str(temp.site.tolist())
+ 
+
+
+
 
 
 
@@ -91,14 +146,18 @@ def main():
    The chromium browser needs to be installed and chrome driver executable availabe to work.
    """
 
-   res = scrapeSite(getDriver(), 60) #the min threshold value
-   if res is not None:
-      print(res)
+   siteList = scrapeSite(getDriver(), 60) #the min threshold value
+   if siteList is not None:
+      print(siteList)
       #sendMessage(res, ['+1phonenumber']) # list of phonenumbers
    
 
+
 if __name__ == "__main__":
-  main()
-  
+   main()
+#   siteLst = ['https://ammoseek.com/go.to/125477048188/a', 'https://ammoseek.com/go.to/125477048192/b']
+#   a = updateDataStore(siteLst, 30)
+#   print(a)
+
 
 
