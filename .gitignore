@@ -1,5 +1,6 @@
-# Configuration files
+# Configuration and data files
 config.py
+data.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
