@@ -1,7 +1,10 @@
-import config # AWS credentials saved in the config fil
+import time
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import boto3
+import config # AWS credentials saved in the config file
 
 
 def getDriver():
@@ -18,7 +21,7 @@ def getDriver():
    return driver
 
 
-import boto3
+
 def sendMessage(message, cellNumbers):
    """Sends SMS to the cell numbers about the price and the sites that selling at that price.
 
@@ -45,8 +48,7 @@ def sendMessage(message, cellNumbers):
       print(result)
    return 
 
-import time
-import pandas as pd
+
 def scrapeSite(driver, price_threshold):   
    """returns the min price and the sites that offer that price under the specificed threshold.
 
