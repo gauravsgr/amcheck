@@ -1,7 +1,11 @@
+import time
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import boto3
 import config # AWS credentials saved in the config file
+
 
 def getDriver():
    """Creates and returns the chrome headless driver."""
@@ -17,7 +21,6 @@ def getDriver():
    return driver
 
 
-import boto3
 def sendMessage(message, cellNumbers):
    """Sends SMS to the cell numbers about the price and the sites that selling at that price.
 
@@ -44,7 +47,8 @@ def sendMessage(message, cellNumbers):
       print(result)
    return 
 
-def scrapeSite(driver, minValue):   
+
+def scrapeSite(driver, price_threshold):   
    """returns the min price and the sites that offer that price under the specificed threshold.
 
       The chromium browser needs to be installed and chrome driver executable availabe to work.
@@ -76,12 +80,35 @@ def scrapeSite(driver, minValue):
       print(site, price)
    driver.quit() # closing the driver
    
-   temp = min(prices.values()) # checking if there is a price <= threshold
-   if temp > minValue: 
+   # checking if there is a price <= threshold
+   min_site_price = min(prices.values()) 
+   if min_site_price > price_threshold: 
       return None
-   res = [key for key in prices if prices[key] == temp]     
-   return (str(temp) + '¢ @ ' + str(res))
+   siteList = [key for key in prices if prices[key] == min_site_price]   
 
+   # Appending the list of sites that beat the threshold to our data file
+   df = pd.DataFrame()
+   seconds = int(time.time())
+   df['site'] = siteList
+   df['price'] = min_site_price
+   df['seconds'] = seconds
+   df['updated'] = 1
+   filename = "data.txt"
+   with open(filename, 'a') as f:
+      df.to_csv(f, mode='a', header=f.tell()==0, index=None)
+   f.close()
+
+   # Updating data file 1) update seconds of site to reflect the most recent time 2) update 'updated' to times same site has been shown 3) remove sites older than 24 hours
+   df = pd.read_csv(filename)
+   df = df.groupby(['site', 'price']).agg(
+      seconds = ('seconds', 'max'), updated = ('updated', 'sum')
+      ).reset_index()
+   df = df[(df['seconds'] >= (seconds - 86400))] # removing rows older than rolling 24 hours
+   df.to_csv(filename, encoding='utf-8', index=False)
+   temp = df[((df['updated'] == 1) & (df['seconds'] == seconds))] # filtering sites who are updated only once (i.e. only added) and done most recently
+   if(temp.shape[0] == 0):
+      return None
+   return str(min_site_price) + '¢ @ ' + str(temp.site.tolist())
 
 
 def main():
@@ -91,14 +118,12 @@ def main():
    The chromium browser needs to be installed and chrome driver executable availabe to work.
    """
 
-   res = scrapeSite(getDriver(), 60) #the min threshold value
-   if res is not None:
-      print(res)
-      #sendMessage(res, ['+1phonenumber']) # list of phonenumbers
+   site_list_message = scrapeSite(getDriver(), 30) #the min threshold value
+   if site_list_message is not None:
+      print(site_list_message)
+      sendMessage(site_list_message, config.cell_numbers_list) # list of phonenumbers
    
 
 if __name__ == "__main__":
-  main()
-  
-
-
+   main()
+   
