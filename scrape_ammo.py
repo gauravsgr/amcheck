@@ -1,7 +1,8 @@
+import config # AWS credentials saved in the config fil
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import config # AWS credentials saved in the config file
+
 
 def getDriver():
    """Creates and returns the chrome headless driver."""
