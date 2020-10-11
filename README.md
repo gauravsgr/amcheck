@@ -8,5 +8,7 @@ round threshold specified.
 If there are sellers idenfied who are offering a price lower than the threshold specified, pick the ones with the lowest 
 price and send a SMS notification. 
 
-To do:
-1. Add steps to add chrome browser
+Note: 
+1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). THe 
+chrome driver can be downloaded from https://chromedriver.chromium.org/downloads.
+2. This program is for demonstration purpose only. Check with the website for any t&c.
