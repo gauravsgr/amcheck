@@ -15,3 +15,6 @@ chrome driver can be downloaded from https://chromedriver.chromium.org/downloads
 3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome and chromedriver. Steps are:
 * docker build -t ammscraper .
 * docker run --rm -it ammscraper
+* python3 scrape_ammo.py
+* docker run -d ammscraper 
+* docker logs <continerid>

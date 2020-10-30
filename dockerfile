@@ -20,6 +20,6 @@ ENV DISPLAY=:99
 # install python packages and execute python app
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
-CMD ["python3", "./scrape_ammo.py"]
+CMD ["python3","-u","scrape_ammo.py"]
 
 #RUN python3 ./scrape_ammo.py
