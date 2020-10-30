@@ -1,4 +1,5 @@
 import time
+import random
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -121,7 +122,9 @@ def main():
    site_list_message = scrapeSite(getDriver(), 50) #the min threshold value
    if site_list_message is not None:
       print(site_list_message)
-      sendMessage(site_list_message, config.cell_numbers_list) # list of phonenumbers
+      #sendMessage(site_list_message, config.cell_numbers_list) # list of phonenumbers
    
 if __name__ == "__main__":
-   main()
+   while(True):
+      main()
+      time.sleep(random.randint(5,20)*60) # wait time before next method call; randomly between 5 - 20 mins
