@@ -119,10 +119,10 @@ def main():
    The chromium browser needs to be installed and chrome driver executable availabe to work.
    """
 
-   site_list_message = scrapeSite(getDriver(), 50) #the min threshold value
+   site_list_message = scrapeSite(getDriver(), 30) #the min threshold value
    if site_list_message is not None:
       print(site_list_message)
-      #sendMessage(site_list_message, config.cell_numbers_list) # list of phonenumbers
+      sendMessage(site_list_message, config.cell_numbers_list) # list of phonenumbers
    
 if __name__ == "__main__":
    while(True):
