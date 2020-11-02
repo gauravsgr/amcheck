@@ -9,17 +9,53 @@ If there are sellers idenfied who are offering a price lower than the threshold 
 price and send a SMS notification. 
 
 Note: 
-1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). THe 
+1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). The 
 chrome driver can be downloaded from https://chromedriver.chromium.org/downloads.
-2. This app is for demonstration purpose only. Check with the website for any t&c.
-3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome and chromedriver. Steps are:
+2. This app is for demonstration purpose only. Refer to the website t&c.
+3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome and chromedriver (and a webapp if you use docker-compose). 
+4. This repo is under automated build at docker hub. Images can be downloaded directly instead of building it. 
+Steps are:
 
-[A] Create docker Image
+[A1] Build docker Image by going (cd) into app directory
 * docker build -t ammscraper .
 
-[B] Run docker image in container in interactive mode
+[A2] Run docker image in container in interactive mode
 * docker run --rm -it ammscraper
 * python3 scrape_ammo.py
+
 OR Run docker image in detached mode
+
 * docker run -d ammscraper 
 * docker logs <continerid>
+
+[B1] Build and run docker containers (flask web-app and scraper app) using docker-compose
+* docker-compose up -d 
+
+[B2] Build and run docker containers (flask web-app and scraper app) using docker-compose
+* docker exec -it <container name> bash
+
+[B2] Command to shutdown all docker-compose containers 
+* docker-compose down
+
+[C] Command to clean up all containers
+* docker system prune -a
+
+[D] Command to list all volumes (data attached to containers)
+* docker volume ls
+
+[D] Command to remove a volume (data attached to containers)
+* docker volume rm <volume name>
+  
+[E] List docker images
+* docker images  
+  
+[F] List docker containers
+* docker ps
+
+[G] Kill docker container
+* docker kill <container id>
+  
+  
+
+
+
