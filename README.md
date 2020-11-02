@@ -17,7 +17,8 @@ chrome driver can be downloaded from https://chromedriver.chromium.org/downloads
 and chromedriver (and a webapp if you use docker-compose). If docker-compose is used, the data.txt log can be accessed through 
 the flask app at http://localhost:8888/data. (change with IP address if running on a remote/cloud host). Alternatively you 
 can bash in the scraper container and check the logs at /tmp/data.txt.
-4. This repo is under automated build at docker hub. Images can be downloaded directly instead of building it. 
+4. This repo is under automated build at docker hub. Scraper Image (https://hub.docker.com/r/gauravsgr/amcheck) can be downloaded 
+directly instead of building it. 
 
 General docker commands are:
 [A1] Build docker Image by going (cd) into app directory
