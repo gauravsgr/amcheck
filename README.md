@@ -12,7 +12,7 @@ Note:
 1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). The 
 chrome driver can be downloaded from https://chromedriver.chromium.org/downloads.
 2. This app is for demonstration purpose only. Refer to the website t&c.
-3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome and chromedriver (and a webapp if you use docker-compose). If docker-compose is used, the data.txt log can be accessed through the flask app at http://localhost:8888/. (change with IP address if running on a remote/cloud host). Alternatively you can bash in the scraper container and check the logs at /tmp/data.txt.
+3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome and chromedriver (and a webapp if you use docker-compose). If docker-compose is used, the data.txt log can be accessed through the flask app at http://localhost:8888/data. (change with IP address if running on a remote/cloud host). Alternatively you can bash in the scraper container and check the logs at /tmp/data.txt.
 4. This repo is under automated build at docker hub. Images can be downloaded directly instead of building it. 
 General docker commands are:
 
