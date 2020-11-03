@@ -10,8 +10,9 @@ price and send a SMS notification. You need to have an AWS account and update co
 SMS sending capability.
 
 Note: 
-1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). The 
-chrome driver can be downloaded from https://chromedriver.chromium.org/downloads.
+1. The chrome driver matching the chrome browser should be kept in the directory (where the python file resides). The chrome 
+driver can be downloaded from https://chromedriver.chromium.org/downloads. However, it is not a requirement if you are building 
+using docker images.
 2. This app is for demonstration purpose only. Refer to the website t&c.
 3. This app can also be run in docker. Preferred mode if you want to run the application as it. Docker installs both chrome 
 and chromedriver (and a webapp if you use docker-compose). If docker-compose is used, the data.txt log can be accessed through 
